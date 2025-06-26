@@ -4,7 +4,7 @@
 set -e
 
 # EGMCP Server Details
-REPO="saptak/egmcp"
+REPO="saptak/eg-mcp-server"
 
 # Determine OS and Architecture
 OS="$(uname -s | tr '[:upper:]' '[:lower:]')"
