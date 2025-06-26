@@ -134,10 +134,10 @@ if [ -f "$CONFIG_FILE" ]; then
                   "env": {}
                 }' "$CONFIG_FILE" > "$CONFIG_FILE.tmp" && mv "$CONFIG_FILE.tmp" "$CONFIG_FILE"
         else
-            echo "jq not available, using manual JSON manipulation..."
-            # Check if mcpServers section exists
-            if grep -q '"mcpServers"' "$CONFIG_FILE"; then
-                # Extract everything before the closing brace of mcpServers
+            echo "jq not available, trying Python3 for JSON manipulation..."
+            
+            # Try Python3 JSON manipulation
+            if command -v python3 &> /dev/null; then
                 python3 -c "
 import json
 import sys
@@ -150,7 +150,7 @@ try:
     if 'mcpServers' not in config:
         config['mcpServers'] = {}
     
-    # Add or update egmcp-server
+    # Add egmcp-server
     config['mcpServers']['egmcp-server'] = {
         'command': '$BINARY_PATH_ESCAPED',
         'args': ['stdio-tools', '--envoy-url', 'http://localhost:9901'],
@@ -160,15 +160,54 @@ try:
     with open('$CONFIG_FILE', 'w') as f:
         json.dump(config, f, indent=2)
     
-    print('✅ Configuration updated successfully')
+    print('✅ Configuration updated successfully with Python3')
 except Exception as e:
-    print(f'❌ Error updating config: {e}')
+    print(f'❌ Python3 JSON manipulation failed: {e}')
     sys.exit(1)
-" 2>/dev/null || {
-                echo "❌ Failed to update configuration safely"
-                echo "   Please manually add the following to your Claude Desktop config:"
+" 2>/dev/null && echo "✅ EGMCP Server added to Claude Desktop configuration" || {
+                    echo "❌ Python3 JSON manipulation failed"
+                    echo ""
+                    echo "📝 Manual configuration required:"
+                    echo "   Please add the following to your Claude Desktop config file:"
+                    echo "   File location: $CONFIG_FILE"
+                    echo ""
+                    echo "   Add this inside the \"mcpServers\" section:"
+                    echo "   \"egmcp-server\": {"
+                    echo "     \"command\": \"$BINARY_PATH_ESCAPED\","
+                    echo "     \"args\": [\"stdio-tools\", \"--envoy-url\", \"http://localhost:9901\"],"
+                    echo "     \"env\": {}"
+                    echo "   }"
+                    echo ""
+                    echo "   Your config should look like:"
+                    echo "   {"
+                    echo "     \"mcpServers\": {"
+                    echo "       \"mcp-youtube\": { ... },"
+                    echo "       \"egmcp-server\": {"
+                    echo "         \"command\": \"$BINARY_PATH_ESCAPED\","
+                    echo "         \"args\": [\"stdio-tools\", \"--envoy-url\", \"http://localhost:9901\"],"
+                    echo "         \"env\": {}"
+                    echo "       }"
+                    echo "     }"
+                    echo "   }"
+                }
+            else
+                echo "❌ Neither jq nor python3 available for safe JSON manipulation"
+                echo ""
+                echo "📝 Manual configuration required:"
+                echo "   Please add the following to your Claude Desktop config file:"
+                echo "   File location: $CONFIG_FILE"
+                echo ""
+                echo "   Add this inside the \"mcpServers\" section:"
+                echo "   \"egmcp-server\": {"
+                echo "     \"command\": \"$BINARY_PATH_ESCAPED\","
+                echo "     \"args\": [\"stdio-tools\", \"--envoy-url\", \"http://localhost:9901\"],"
+                echo "     \"env\": {}"
+                echo "   }"
+                echo ""
+                echo "   Your config should look like:"
                 echo "   {"
                 echo "     \"mcpServers\": {"
+                echo "       \"mcp-youtube\": { ... },"
                 echo "       \"egmcp-server\": {"
                 echo "         \"command\": \"$BINARY_PATH_ESCAPED\","
                 echo "         \"args\": [\"stdio-tools\", \"--envoy-url\", \"http://localhost:9901\"],"
@@ -176,13 +215,8 @@ except Exception as e:
                 echo "       }"
                 echo "     }"
                 echo "   }"
-                echo ""
-                echo "   Config file location: $CONFIG_FILE"
-                return 1
-            }
             fi
         fi
-        echo "✅ EGMCP Server added to Claude Desktop configuration"
     fi
 else
     echo "Creating new Claude Desktop configuration..."
