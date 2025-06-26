@@ -110,6 +110,8 @@ if [ -f "$CONFIG_FILE" ]; then
     # Check if egmcp-server is already configured
     if grep -q "egmcp-server" "$CONFIG_FILE" 2>/dev/null; then
         echo "✅ EGMCP Server already configured in Claude Desktop"
+        echo "   Existing configuration preserved (no changes made)"
+        echo "   To modify settings, edit: $CONFIG_FILE"
     else
         echo "Adding EGMCP Server to existing configuration..."
         # Backup existing config
