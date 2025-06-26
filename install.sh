@@ -115,24 +115,71 @@ if [ -f "$CONFIG_FILE" ]; then
         # Backup existing config
         cp "$CONFIG_FILE" "$CONFIG_FILE.backup"
         
-        # Add egmcp-server to existing config (simple approach - append before closing brace)
+        # Escape binary path for JSON
         if [ "$OS" = "windows" ]; then
             BINARY_PATH_ESCAPED="${BINARY_PATH//\\/\\\\}"
         else
             BINARY_PATH_ESCAPED="$BINARY_PATH"
         fi
         
-        # Remove the last closing brace and add our server config
-        sed '$ s/}//' "$CONFIG_FILE" > "$CONFIG_FILE.tmp"
-        echo '    ,' >> "$CONFIG_FILE.tmp"
-        echo '    "egmcp-server": {' >> "$CONFIG_FILE.tmp"
-        echo '      "command": "'$BINARY_PATH_ESCAPED'",' >> "$CONFIG_FILE.tmp"
-        echo '      "args": ["stdio-tools", "--envoy-url", "http://localhost:9901"],' >> "$CONFIG_FILE.tmp"
-        echo '      "env": {}' >> "$CONFIG_FILE.tmp"
-        echo '    }' >> "$CONFIG_FILE.tmp"
-        echo '  }' >> "$CONFIG_FILE.tmp"
-        echo '}' >> "$CONFIG_FILE.tmp"
-        mv "$CONFIG_FILE.tmp" "$CONFIG_FILE"
+        # Use jq if available for safer JSON manipulation
+        if command -v jq &> /dev/null; then
+            echo "Using jq for safe JSON manipulation..."
+            jq --arg cmd "$BINARY_PATH_ESCAPED" \
+               '.mcpServers["egmcp-server"] = {
+                  "command": $cmd,
+                  "args": ["stdio-tools", "--envoy-url", "http://localhost:9901"],
+                  "env": {}
+                }' "$CONFIG_FILE" > "$CONFIG_FILE.tmp" && mv "$CONFIG_FILE.tmp" "$CONFIG_FILE"
+        else
+            echo "jq not available, using manual JSON manipulation..."
+            # Check if mcpServers section exists
+            if grep -q '"mcpServers"' "$CONFIG_FILE"; then
+                # Extract everything before the closing brace of mcpServers
+                python3 -c "
+import json
+import sys
+
+try:
+    with open('$CONFIG_FILE', 'r') as f:
+        config = json.load(f)
+    
+    # Ensure mcpServers exists
+    if 'mcpServers' not in config:
+        config['mcpServers'] = {}
+    
+    # Add or update egmcp-server
+    config['mcpServers']['egmcp-server'] = {
+        'command': '$BINARY_PATH_ESCAPED',
+        'args': ['stdio-tools', '--envoy-url', 'http://localhost:9901'],
+        'env': {}
+    }
+    
+    with open('$CONFIG_FILE', 'w') as f:
+        json.dump(config, f, indent=2)
+    
+    print('✅ Configuration updated successfully')
+except Exception as e:
+    print(f'❌ Error updating config: {e}')
+    sys.exit(1)
+" 2>/dev/null || {
+                echo "❌ Failed to update configuration safely"
+                echo "   Please manually add the following to your Claude Desktop config:"
+                echo "   {"
+                echo "     \"mcpServers\": {"
+                echo "       \"egmcp-server\": {"
+                echo "         \"command\": \"$BINARY_PATH_ESCAPED\","
+                echo "         \"args\": [\"stdio-tools\", \"--envoy-url\", \"http://localhost:9901\"],"
+                echo "         \"env\": {}"
+                echo "       }"
+                echo "     }"
+                echo "   }"
+                echo ""
+                echo "   Config file location: $CONFIG_FILE"
+                return 1
+            }
+            fi
+        fi
         echo "✅ EGMCP Server added to Claude Desktop configuration"
     fi
 else
