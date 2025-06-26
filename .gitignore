@@ -1,0 +1,11 @@
+# Binaries
+egmcp-server
+egmcp-server.exe
+
+# Archives
+*.tar.gz
+*.zip
+
+# Build artifacts
+dist/
+build/
