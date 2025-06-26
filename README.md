@@ -104,7 +104,6 @@ Once connected, you can ask Claude:
 ## 🆘 Support
 
 - **Issues**: [Report problems](https://github.com/saptak/eg-mcp-server/issues)
-- **Source Code**: [Development repository](https://github.com/saptak/egmcp)
 
 ## 📄 License
 
