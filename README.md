@@ -32,32 +32,11 @@ kubectl port-forward -n envoy-gateway-system pod/YOUR_ENVOY_POD 9901:19000
 curl -sSL https://raw.githubusercontent.com/saptak/eg-mcp-server/main/setup-envoy.sh | bash
 ```
 
-### 3. Configure Claude Desktop
-
-The installer automatically configures Claude Desktop, but you can verify at:
-
-**macOS:** `~/Library/Application Support/Claude/claude_desktop_config.json`
-**Windows:** `%APPDATA%\Claude\claude_desktop_config.json`  
-**Linux:** `~/.config/Claude/claude_desktop_config.json`
-
-Should contain:
-```json
-{
-  "mcpServers": {
-    "egmcp-server": {
-      "command": "/usr/local/bin/egmcp-server",
-      "args": ["stdio-tools", "--envoy-url", "http://localhost:9901"],
-      "env": {}
-    }
-  }
-}
-```
-
-### 4. Restart Claude Desktop
+### 3. Restart Claude Desktop
 
 Restart Claude Desktop to load the EGMCP server.
 
-### 5. Test the Connection
+### 4. Test the Connection
 
 Ask Claude: *"What listeners are configured in Envoy Gateway?"*
 
