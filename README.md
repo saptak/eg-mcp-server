@@ -8,6 +8,10 @@
 
 A Model Context Protocol (MCP) server that connects Claude Desktop to Envoy Gateway, enabling natural language queries about your service mesh configuration.
 
+## 📖 Documentation
+
+**[📚 Complete User Guide](USER_GUIDE.md)** - Comprehensive installation, configuration, and usage documentation
+
 ## 🚀 Quick Start
 
 ### 1. Install EGMCP Server
@@ -50,6 +54,8 @@ Ask Claude: *"What listeners are configured in Envoy Gateway?"*
 1. Ensure port forwarding is running: `curl http://localhost:9901/ready`
 2. Test EGMCP health: `egmcp-server health --envoy-url http://localhost:9901`
 3. Restart Claude Desktop
+
+**For detailed troubleshooting:** See the [User Guide](USER_GUIDE.md#troubleshooting)
 
 ### Manual Installation
 
@@ -94,6 +100,8 @@ Once connected, you can ask Claude:
 | **`list_envoy_clusters`** | List backend clusters |
 | **`get_envoy_config_summary`** | Overall configuration summary |
 
+**For detailed tool documentation:** See the [User Guide](USER_GUIDE.md#available-tools)
+
 ## 📋 System Requirements
 
 - **Claude Desktop**: Latest version with MCP support
@@ -104,6 +112,7 @@ Once connected, you can ask Claude:
 ## 🆘 Support
 
 - **Issues**: [Report problems](https://github.com/saptak/eg-mcp-server/issues)
+- **Documentation**: [Complete User Guide](USER_GUIDE.md)
 
 ## 📄 License
 
@@ -112,3 +121,4 @@ MIT License - see [LICENSE](LICENSE) file for details.
 ---
 
 **Need help?** The most common issue is Envoy Gateway connectivity. Ensure port forwarding is active: `kubectl port-forward -n envoy-gateway-system pod/YOUR_ENVOY_POD 9901:19000`
+EOF < /dev/null
