@@ -1,11 +1,5 @@
 # EGMCP Server - Envoy Gateway MCP Server
 
-### **Alpha Software - Evaluation Only**
-
-**Warning:** This MCP server is currently in an alpha stage and is **not ready for production use**. It is provided for evaluation purposes only. The authors and contributors bear no liability for any damages or issues that may arise from its use.
-
----
-
 A Model Context Protocol (MCP) server that connects Claude Desktop to Envoy Gateway, enabling natural language queries about your service mesh configuration.
 
 ## 🎬 Watch the Demo
