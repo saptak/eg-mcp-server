@@ -8,6 +8,12 @@
 
 A Model Context Protocol (MCP) server that connects Claude Desktop to Envoy Gateway, enabling natural language queries about your service mesh configuration.
 
+## 🎬 Watch the Demo
+
+Check out this YouTube short for a quick demo of the EGMCP server in action:
+
+[![EGMCP Server Demo](https://img.youtube.com/vi/C-Fakrx3fUQ/0.jpg)](https://www.youtube.com/shorts/C-Fakrx3fUQ)
+
 ## 📖 Documentation
 
 **[📚 Complete User Guide](USER_GUIDE.md)** - Comprehensive installation, configuration, and usage documentation
