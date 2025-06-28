@@ -16,6 +16,36 @@ A Model Context Protocol (MCP) server that connects Claude Desktop to Envoy Gate
 
 ### 1. Install EGMCP Server
 
+#### Option A: NPX Installation (Recommended - No Install Required)
+
+```bash
+# Test the server directly
+npx @saptak/egmcp-server stdio-tools --envoy-url http://localhost:9901
+
+# Use specific version
+npx @saptak/egmcp-server@0.2.11 stdio-tools --envoy-url http://localhost:9901
+```
+
+For Claude Desktop, configure with:
+```json
+{
+  "mcpServers": {
+    "egmcp-server": {
+      "command": "npx",
+      "args": [
+        "@saptak/egmcp-server",
+        "stdio-tools",
+        "--envoy-url",
+        "http://localhost:9901"
+      ],
+      "env": {}
+    }
+  }
+}
+```
+
+#### Option B: Binary Installation
+
 ```bash
 curl -sSL https://raw.githubusercontent.com/saptak/eg-mcp-server/main/install.sh | bash
 ```
