@@ -563,11 +563,8 @@ Please include:
 ### Contributing
 
 Contributions are welcome! Please see:
-- **Contributing Guide**: https://github.com/saptak/egmcp-server/blob/main/CONTRIBUTING.md
-- **Development Setup**: https://github.com/saptak/egmcp-server/blob/main/docs/DEVELOPMENT.md
 
 ### Release Notes
 
 Stay updated with new features and improvements:
 - **Releases**: https://github.com/saptak/egmcp-server/releases
-- **Changelog**: https://github.com/saptak/egmcp-server/blob/main/CHANGELOG.md
