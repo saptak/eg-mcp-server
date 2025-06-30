@@ -4,7 +4,7 @@
 
 # EGMCP Server User Guide
 
-Complete guide to using the EGMCP Server with Claude Desktop for Envoy Gateway management.
+Complete guide to using the EGMCP Server with Claude Desktop for comprehensive Envoy Gateway management including monitoring, route creation, and traffic configuration.
 
 ## Table of Contents
 
@@ -13,168 +13,84 @@ Complete guide to using the EGMCP Server with Claude Desktop for Envoy Gateway m
 3. [Configuration](#configuration)
 4. [Using with Claude Desktop](#using-with-claude-desktop)
 5. [Available Tools](#available-tools)
-6. [Common Use Cases](#common-use-cases)
-7. [Troubleshooting](#troubleshooting)
-8. [Advanced Configuration](#advanced-configuration)
+6. [Route Management](#route-management)
+7. [Gateway Configuration](#gateway-configuration)
+8. [Common Use Cases](#common-use-cases)
+9. [Safety Features](#safety-features)
+10. [Troubleshooting](#troubleshooting)
+11. [Advanced Configuration](#advanced-configuration)
 
 ## Getting Started
 
-The EGMCP Server provides Claude Desktop with direct access to your Envoy Gateway configuration. This enables natural language queries and management of your service mesh infrastructure.
+The EGMCP Server provides Claude Desktop with comprehensive access to your Envoy Gateway configuration, enabling both **read-only monitoring** and **write operations** for route management and traffic configuration using natural language.
 
 ### Prerequisites
 
 - **Claude Desktop** (latest version with MCP support)
 - **Envoy Gateway** deployed and accessible
-- **Network access** to Envoy Gateway admin API (typically port 9901/19000)
+- **Kubernetes cluster** with Gateway API resources
+- **Network access** to Envoy Gateway admin API (typically port 19000)
+- **kubectl access** for write operations
 - **macOS, Linux, or Windows** for the server
+
+### What's New in Sprint 3
+
+🚀 **Route Creation and Management**
+- Create HTTPRoute resources via natural language
+- Delete and modify existing routes
+- Full Gateway listener management
+
+🛡️ **Production Safety Features**
+- Read-only mode for safe monitoring
+- Comprehensive error handling
+- RBAC permission validation
+- Resource conflict detection
+
+⚡ **Enhanced Capabilities**
+- 7 specialized tools for complete gateway management
+- Generate-Apply-Verify pattern for reliable operations
+- Real-time configuration feedback
 
 ### Quick Overview
 
 ```mermaid
 graph LR
     A[Claude Desktop] -->|MCP Protocol| B[EGMCP Server]
-    B -->|HTTP API| C[Envoy Gateway]
+    B -->|Admin API| C[Envoy Gateway]
+    B -->|Kubernetes API| D[K8s Gateway Resources]
     C -->|Configuration Data| B
+    D -->|Route Status| B
     B -->|Structured Response| A
 ```
 
 ## Installation
 
-### NPX Installation (Recommended)
+**For complete installation instructions, see the [main project README](../README.md#-quick-start).**
 
-The simplest installation method uses NPX - no manual installation required:
+### Quick Setup Summary
 
+1. **Install**: `curl -sSL https://raw.githubusercontent.com/saptak/egmcp-server/main/install.sh | bash`
+2. **Setup Envoy**: `curl -sSL https://raw.githubusercontent.com/saptak/egmcp-server/main/setup-envoy.sh | bash`  
+3. **Restart Claude Desktop**
+
+### Alternative: NPX (No Installation)
 ```bash
-# Test the server directly
-npx @saptak/egmcp-server stdio-tools --envoy-url http://localhost:9901
-
-# Use specific version
-npx @saptak/egmcp-server@0.2.11 stdio-tools --envoy-url http://localhost:9901
+npx @saptak/egmcp-server stdio-tools --envoy-url http://localhost:19001 --kubernetes.kubeconfig ~/.kube/config
 ```
-
-For Claude Desktop, configure with:
-```json
-{
-  "mcpServers": {
-    "egmcp-server": {
-      "command": "npx",
-      "args": [
-        "@saptak/egmcp-server",
-        "stdio-tools",
-        "--envoy-url",
-        "http://localhost:9901"
-      ],
-      "env": {}
-    }
-  }
-}
-```
-
-### Automatic Binary Installation
-
-```bash
-curl -sSL https://raw.githubusercontent.com/saptak/eg-mcp-server/main/install.sh | bash
-```
-
-The installer will:
-1. Download the appropriate binary for your system
-2. Install to `/usr/local/bin/egmcp-server`
-3. Configure Claude Desktop automatically (preserving existing MCP servers)
-4. Provide fallback instructions if automation is unavailable
-
-### Envoy Gateway Setup
-
-After installation, set up Envoy Gateway port forwarding:
-
-```bash
-curl -sSL https://raw.githubusercontent.com/saptak/eg-mcp-server/main/setup-envoy.sh | bash
-```
-
-This automatically detects and forwards the Envoy Gateway admin API to localhost:9901.
-
-### Manual Installation
-
-1. **Download Binary**
-   ```bash
-   # Download for your platform from GitHub releases
-   wget https://github.com/saptak/eg-mcp-server/releases/latest/download/egmcp-server-linux-amd64
-   chmod +x egmcp-server-linux-amd64
-   sudo mv egmcp-server-linux-amd64 /usr/local/bin/egmcp-server
-   ```
-
-2. **Configure Claude Desktop**
-   
-   Edit `~/Library/Application Support/Claude/claude_desktop_config.json`:
-   ```json
-   {
-     "mcpServers": {
-       "egmcp-server": {
-         "command": "/usr/local/bin/egmcp-server",
-         "args": ["stdio-tools", "--envoy-url", "http://localhost:9901"],
-         "env": {}
-       }
-     }
-   }
-   ```
-
-3. **Set up Envoy Gateway Access**
-   ```bash
-   # Find Envoy Gateway pod
-   kubectl get pods -n envoy-gateway-system
-   
-   # Forward admin API port
-   kubectl port-forward -n envoy-gateway-system pod/YOUR_ENVOY_POD 9901:19000
-   ```
 
 ## Configuration
 
-### Claude Desktop Configuration
+**For detailed configuration options, see the [main README](../README.md#-configuration).**
 
-The Claude Desktop configuration specifies how to run the server:
+### Key Configuration Options
 
-```json
-{
-  "mcpServers": {
-    "egmcp-server": {
-      "command": "/usr/local/bin/egmcp-server",
-      "args": ["stdio-tools", "--envoy-url", "http://localhost:9901"],
-      "env": {}
-    }
-  }
-}
-```
-
-The installation script automatically handles this configuration, preserving any existing MCP servers.
-
-### Command Line Options
-
-You can customize the Envoy Gateway connection:
-
-```bash
-# Different Envoy URL
-egmcp-server stdio-tools --envoy-url http://different-host:9901
-
-# Enable debug logging
-egmcp-server stdio-tools --envoy-url http://localhost:9901 --log-level debug
-```
+- `--envoy-url`: Envoy Gateway admin API URL
+- `--kubernetes.kubeconfig`: Path to kubeconfig file  
+- `--kubernetes.read_only`: Enable read-only mode (safe for production)
+- `--kubernetes.default_namespace`: Default namespace for operations
+- `--log-level`: Logging verbosity (debug, info, warn, error)
 
 ## Using with Claude Desktop
-
-### Starting Up
-
-1. **Install and Configure** (one-time setup)
-   ```bash
-   curl -sSL https://raw.githubusercontent.com/saptak/eg-mcp-server/main/install.sh | bash
-   ```
-
-2. **Set up Envoy Gateway Access** (run when needed)
-   ```bash
-   curl -sSL https://raw.githubusercontent.com/saptak/eg-mcp-server/main/setup-envoy.sh | bash
-   ```
-
-3. **Restart Claude Desktop** to load the MCP server
-
-4. **Verify Connection** - Claude Desktop should show "egmcp-server" as connected
 
 ### Basic Queries
 
@@ -183,12 +99,17 @@ Once connected, you can interact with your Envoy Gateway using natural language:
 #### Status and Overview
 - *"What's the current status of my Envoy Gateway?"*
 - *"Give me a summary of the gateway configuration"*
-- *"How many services are configured?"*
+- *"How many routes and services are configured?"*
 
 #### Configuration Discovery
 - *"Show me all the listeners in Envoy Gateway"*
 - *"List the routes configured in my gateway"*
 - *"What backend clusters are available?"*
+
+#### Route Management (New in Sprint 3)
+- *"Create a new route for api.example.com that sends traffic to my-service on port 8080"*
+- *"Delete the route named test-route"*
+- *"Add an HTTPS listener on port 443 to my gateway"*
 
 #### Detailed Analysis
 - *"Analyze my traffic routing configuration"*
@@ -197,9 +118,11 @@ Once connected, you can interact with your Envoy Gateway using natural language:
 
 ## Available Tools
 
-The EGMCP Server provides 4 specialized tools for Envoy Gateway management:
+The EGMCP Server provides 7 specialized tools for comprehensive Envoy Gateway management:
 
-### 1. `list_envoy_listeners`
+### Read-Only Monitoring Tools
+
+#### 1. `list_envoy_listeners`
 
 **Purpose**: Discover all listeners with their configurations
 
@@ -208,11 +131,11 @@ The EGMCP Server provides 4 specialized tools for Envoy Gateway management:
 - *"What listeners are configured?"*
 
 **Output**: JSON array of listener configurations including:
-- Listener names
+- Listener names and addresses
 - Socket addresses and ports
-- Filter chain configurations
+- Protocol configurations
 
-### 2. `list_envoy_routes`
+#### 2. `list_envoy_routes`
 
 **Purpose**: Analyze traffic routing configuration
 
@@ -226,7 +149,7 @@ The EGMCP Server provides 4 specialized tools for Envoy Gateway management:
 - Path matching rules
 - Cluster destinations
 
-### 3. `list_envoy_clusters`
+#### 3. `list_envoy_clusters`
 
 **Purpose**: Discover backend services and clusters
 
@@ -235,11 +158,11 @@ The EGMCP Server provides 4 specialized tools for Envoy Gateway management:
 - *"What services can receive traffic?"*
 
 **Output**: Cluster information including:
-- Cluster names
-- Cluster types (EDS, STATIC, etc.)
+- Cluster names and types
 - Endpoint configurations
+- Health check status
 
-### 4. `get_envoy_config_summary`
+#### 4. `get_envoy_config_summary`
 
 **Purpose**: Quick overview of entire configuration
 
@@ -249,52 +172,261 @@ The EGMCP Server provides 4 specialized tools for Envoy Gateway management:
 
 **Output**: High-level summary with counts and status
 
+### Write Operation Tools (Sprint 3)
+
+#### 5. `create_http_route`
+
+**Purpose**: Create new HTTPRoute resources for traffic routing
+
+**Parameters**:
+- `name`: HTTPRoute resource name
+- `namespace`: Kubernetes namespace (optional, defaults to 'default')
+- `gateway_name`: Target Gateway name
+- `hostname`: Domain to match (e.g., 'api.example.com')
+- `path`: URL path prefix (optional, defaults to '/')
+- `service_name`: Backend Kubernetes service
+- `service_port`: Backend service port
+
+**Example Queries**:
+- *"Create a route named api-route for api.example.com that sends traffic to api-service on port 8080"*
+- *"Add a new route for orders.myapp.com pointing to orders-backend:3000 with path /api"*
+
+**Safety Features**:
+- Validates resource names and hostnames
+- Checks for existing routes with same name
+- Verifies Gateway exists before creation
+- Applies Generate-Apply-Verify pattern
+
+#### 6. `delete_http_route`
+
+**Purpose**: Remove existing HTTPRoute resources
+
+**Parameters**:
+- `name`: HTTPRoute name to delete
+- `namespace`: Kubernetes namespace (optional)
+
+**Example Queries**:
+- *"Delete the route named test-route"*
+- *"Remove the api-route from the demo namespace"*
+
+**Safety Features**:
+- Verifies route exists before deletion
+- Shows route details before removal
+- Confirms successful deletion
+
+#### 7. `modify_listener`
+
+**Purpose**: Add or remove listeners (ports) on Gateway resources
+
+**Parameters**:
+- `gateway_name`: Gateway to modify
+- `namespace`: Kubernetes namespace (optional)
+- `port`: Port number for the listener
+- `protocol`: Protocol (HTTP, HTTPS, TCP, etc.)
+- `action`: 'add', 'create', 'remove', or 'delete'
+
+**Example Queries**:
+- *"Add an HTTPS listener on port 443 to demo-gateway"*
+- *"Remove the listener on port 8080 from my gateway"*
+
+**Safety Features**:
+- Prevents duplicate port conflicts
+- Validates protocol specifications
+- Checks Gateway exists before modification
+
+## Route Management
+
+### Creating Routes
+
+The EGMCP Server makes creating routes intuitive with natural language:
+
+```text
+"Create a route for my API service"
+→ Prompts for required details: hostname, service name, port
+
+"Add a route named user-api for users.example.com that sends traffic to user-service on port 3000"
+→ Creates HTTPRoute with full configuration
+
+"Create a route in the production namespace for payments.app.com pointing to payment-svc:8080 with path /api/v1"
+→ Creates route with custom namespace and path
+```
+
+### Route Validation
+
+All route creation includes comprehensive validation:
+
+- **DNS Names**: Hostnames must be valid RFC 1123 subdomains
+- **Resource Names**: Must follow Kubernetes naming conventions
+- **Port Numbers**: Must be valid port ranges (1-65535)
+- **Conflicts**: Prevents duplicate routes with same name
+- **References**: Validates Gateway exists
+
+### Route Lifecycle
+
+```mermaid
+graph TD
+    A[Create Request] --> B[Validate Parameters]
+    B --> C[Check Conflicts]
+    C --> D[Generate Resource]
+    D --> E[Apply to Cluster]
+    E --> F[Verify Creation]
+    F --> G[Report Success]
+    
+    B -->|Invalid| H[Return Error]
+    C -->|Conflict| H
+    E -->|API Error| H
+    F -->|Verification Failed| I[Warning + Manual Check]
+```
+
+## Gateway Configuration
+
+### Listener Management
+
+Manage Gateway listeners (ports) easily:
+
+```text
+"Add HTTPS support to my gateway"
+→ "Add an HTTPS listener on port 443 to [gateway-name]"
+
+"Remove the test port from my gateway"
+→ "Remove the listener on port 8080 from [gateway-name]"
+```
+
+### Protocol Support
+
+- **HTTP**: Standard web traffic
+- **HTTPS**: Secure web traffic (requires TLS configuration)
+- **TCP**: Raw TCP traffic
+- **UDP**: UDP traffic (where supported)
+
+### Port Conflict Prevention
+
+The server automatically prevents:
+- Adding listeners on ports already in use
+- Removing non-existent listeners
+- Invalid port numbers (outside 1-65535 range)
+
 ## Common Use Cases
 
-### 1. Service Discovery
+### 1. Service Discovery and Monitoring
 
-**Scenario**: Find what services are available
+**Scenario**: Understand current gateway configuration
 
 **Queries**:
 - *"What services are available behind my gateway?"*
-- *"List all backend clusters"*
-- *"Show me the service endpoints"*
+- *"Give me a complete overview of my gateway setup"*
+- *"Show me all the routes and their backends"*
 
-### 2. Traffic Routing Analysis
+### 2. New Service Deployment
 
-**Scenario**: Understand how traffic flows
+**Scenario**: Add a new service to the gateway
+
+**Workflow**:
+1. *"Create a route for my new user service"*
+2. *"Add HTTPS support if needed"*
+3. *"Verify the route is working correctly"*
+
+**Example**:
+```text
+User: "I need to expose my new user-management service on users.myapp.com"
+Assistant: I'll create a route for your user-management service. Let me use the create_http_route tool.
+
+[Creates route with proper configuration]
+
+✅ Successfully created HTTPRoute 'user-management-route' in namespace 'default'!
+
+📋 Configuration Details:
+- Gateway: main-gateway
+- Hostname: users.myapp.com
+- Path: /
+- Backend Service: user-management-service:8080
+- Namespace: default
+
+The route is now active and should be handling traffic.
+```
+
+### 3. Traffic Routing Changes
+
+**Scenario**: Modify existing routing configuration
 
 **Queries**:
-- *"How is traffic routed to my services?"*
-- *"Show me the routing rules for domain example.com"*
-- *"What happens to requests to /api/v1?"*
+- *"Change the backend for api.example.com to the new service"*
+- *"Add a new path /v2 to route to the updated API"*
+- *"Remove the old test routes"*
 
-### 3. Port and Endpoint Discovery
+### 4. SSL/TLS Setup
 
-**Scenario**: Find exposed ports and endpoints
-
-**Queries**:
-- *"What ports is my gateway listening on?"*
-- *"Show me all the exposed endpoints"*
-- *"Is there a listener for HTTPS traffic?"*
-
-### 4. Configuration Validation
-
-**Scenario**: Verify configuration is correct
+**Scenario**: Add HTTPS support
 
 **Queries**:
-- *"Is my gateway configuration healthy?"*
-- *"Are there any missing route configurations?"*
-- *"Validate the current setup"*
+- *"Add HTTPS listener to my gateway"*
+- *"Enable SSL for my services"*
+- *"Configure port 443 for secure traffic"*
 
-### 5. Troubleshooting
+### 5. Environment Management
 
-**Scenario**: Debug connectivity issues
+**Scenario**: Manage different environments
+
+**Queries**:
+- *"Create staging routes for testing"*
+- *"Set up production traffic routing"*
+- *"Isolate development services"*
+
+### 6. Troubleshooting and Debugging
+
+**Scenario**: Debug traffic issues
 
 **Queries**:
 - *"Why isn't traffic reaching my service?"*
-- *"Show me the route for failing requests"*
-- *"Check if the cluster is properly configured"*
+- *"Show me the route configuration for failing requests"*
+- *"Check if my service is properly configured in the gateway"*
+
+## Safety Features
+
+### Read-Only Mode
+
+Enable read-only mode for safe production monitoring:
+
+```bash
+egmcp-server stdio-tools \
+  --envoy-url http://localhost:19001 \
+  --kubernetes.kubeconfig ~/.kube/config \
+  --kubernetes.read_only
+```
+
+In read-only mode:
+- ✅ All monitoring and inspection tools work
+- ❌ No write operations are allowed
+- 🛡️ Zero risk of accidental changes
+
+### Error Handling
+
+Comprehensive error handling provides clear feedback:
+
+- **Parameter Validation**: Clear messages for missing or invalid parameters
+- **Resource Conflicts**: Prevents duplicate or conflicting resources
+- **Permission Issues**: Detects and explains RBAC permission problems
+- **Network Failures**: Graceful handling of connectivity issues
+- **API Errors**: User-friendly translation of Kubernetes API errors
+
+### Generate-Apply-Verify Pattern
+
+All write operations follow a safe pattern:
+
+1. **Generate**: Create resource configuration
+2. **Apply**: Submit to Kubernetes API
+3. **Verify**: Confirm successful creation
+4. **Report**: Provide detailed feedback
+
+### Resource Labeling
+
+All created resources are labeled for tracking:
+```yaml
+metadata:
+  labels:
+    app.kubernetes.io/managed-by: egmcp-server
+    app.kubernetes.io/created-by: egmcp-server
+```
 
 ## Troubleshooting
 
@@ -305,10 +437,11 @@ The EGMCP Server provides 4 specialized tools for Envoy Gateway management:
 **Symptoms**: Claude Desktop shows "Server disconnected" for egmcp-server
 
 **Solutions**:
-1. **Check Envoy Gateway Access**: Run `curl http://localhost:9901/ready`
-   - If fails, run: `curl -sSL https://raw.githubusercontent.com/saptak/eg-mcp-server/main/setup-envoy.sh | bash`
-2. **Verify Installation**: Check binary exists at `/usr/local/bin/egmcp-server`
-3. **Restart Claude Desktop** after any configuration changes
+1. **Check Envoy Gateway Access**: Run `curl http://localhost:19001/ready`
+   - If fails, run: `curl -sSL https://raw.githubusercontent.com/saptak/egmcp-server/main/setup-envoy.sh | bash`
+2. **Verify Kubernetes Access**: Run `kubectl get pods`
+3. **Check Configuration**: Ensure kubeconfig path is correct and absolute
+4. **Restart Claude Desktop** after any configuration changes
 
 #### "Could not attach to MCP Server"
 
@@ -317,27 +450,39 @@ The EGMCP Server provides 4 specialized tools for Envoy Gateway management:
 **Solutions**:
 1. Verify binary path is absolute: `/usr/local/bin/egmcp-server`
 2. Check binary is executable: `chmod +x /usr/local/bin/egmcp-server`
-3. Ensure using `stdio-tools` in args, not `stdio-minimal`
+3. Ensure using `stdio-tools` in args
 4. Check Claude Desktop configuration syntax is valid JSON
+5. Verify kubeconfig path exists and is accessible
 
 #### "Connection refused to Envoy Gateway"
 
 **Symptoms**: Tools return connection errors
 
 **Solutions**:
-1. **Run automated setup**: `curl -sSL https://raw.githubusercontent.com/saptak/eg-mcp-server/main/setup-envoy.sh | bash`
-2. **Manual port forward**: `kubectl port-forward -n envoy-gateway-system pod/YOUR_ENVOY_POD 9901:19000`
-3. **Test connectivity**: `curl http://localhost:9901/ready`
-4. **Check different URL**: Update `--envoy-url` parameter if using different endpoint
+1. **Run automated setup**: `curl -sSL https://raw.githubusercontent.com/saptak/egmcp-server/main/setup-envoy.sh | bash`
+2. **Manual port forward**: `kubectl port-forward -n envoy-gateway-system pod/YOUR_ENVOY_POD 19001:19000`
+3. **Test connectivity**: `curl http://localhost:19001/ready`
+4. **Check different URL**: Update `--envoy-url` parameter
 
-#### "Tools return empty results"
+#### "Kubernetes permission denied"
 
-**Symptoms**: Successful connection but no configuration data
+**Symptoms**: Write operations fail with forbidden errors
 
 **Solutions**:
-1. Verify Envoy Gateway has active configuration and routes
-2. Ensure using correct admin API port (19000 for Gateway)
-3. Check that Envoy Gateway is properly deployed and running
+1. Verify kubectl access: `kubectl get httproutes`
+2. Check RBAC permissions for Gateway API resources
+3. Ensure service account has proper cluster role bindings
+4. Use read-only mode for monitoring: `--kubernetes.read_only`
+
+#### "Route creation fails with validation errors"
+
+**Symptoms**: HTTPRoute creation rejected by API server
+
+**Solutions**:
+1. **Resource Names**: Use lowercase, hyphens only (no underscores or uppercase)
+2. **Hostnames**: Ensure valid DNS format (no special characters)
+3. **Ports**: Use valid port numbers (1-65535)
+4. **Namespaces**: Ensure target namespace exists
 
 ### Debug Mode
 
@@ -348,7 +493,12 @@ Enable detailed logging in Claude Desktop config:
   "mcpServers": {
     "egmcp-server": {
       "command": "/usr/local/bin/egmcp-server",
-      "args": ["stdio-tools", "--envoy-url", "http://localhost:9901", "--log-level", "debug"],
+      "args": [
+        "stdio-tools", 
+        "--envoy-url", "http://localhost:19001",
+        "--kubernetes.kubeconfig", "/Users/yourname/.kube/config",
+        "--log-level", "debug"
+      ],
       "env": {}
     }
   }
@@ -361,83 +511,67 @@ Test server functionality outside Claude Desktop:
 
 ```bash
 # Test Envoy Gateway connectivity
-curl http://localhost:9901/ready
+curl http://localhost:19001/ready
 
-# Test MCP communication
-echo '{"jsonrpc": "2.0", "id": 1, "method": "tools/list", "params": {}}' | egmcp-server stdio-tools --envoy-url http://localhost:9901
+# Test Kubernetes access
+kubectl get gateways,httproutes -A
 
-# Test tool execution
-echo '{"jsonrpc": "2.0", "id": 2, "method": "tools/call", "params": {"name": "get_envoy_config_summary"}}' | egmcp-server stdio-tools --envoy-url http://localhost:9901
+# Test MCP tools list
+echo '{"jsonrpc": "2.0", "id": 1, "method": "tools/list", "params": {}}' | \
+  egmcp-server stdio-tools --envoy-url http://localhost:19001 --kubernetes.kubeconfig ~/.kube/config
+
+# Test route creation
+echo '{"jsonrpc": "2.0", "id": 2, "method": "tools/call", "params": {"name": "create_http_route", "arguments": {"name": "test-route", "gateway_name": "demo-gateway", "hostname": "test.local", "service_name": "test-service", "service_port": 8080}}}' | \
+  egmcp-server stdio-tools --envoy-url http://localhost:19001 --kubernetes.kubeconfig ~/.kube/config
 ```
 
-### Comprehensive Testing
+### Health Check
 
-Run the complete test suite:
+Comprehensive health verification:
 
 ```bash
-# Download and run test suite
-curl -sSL https://raw.githubusercontent.com/saptak/eg-mcp-server/main/test-suite.sh | bash
+# Test all components
+egmcp-server health --envoy-url http://localhost:19001 --kubernetes.kubeconfig ~/.kube/config
 ```
 
 ## Advanced Configuration
 
-### Multiple Envoy Gateways
+**For multi-environment setup, security considerations, and production deployment, see the [main README](../README.md#-configuration).**
 
-Configure for different environments:
-
-```json
-{
-  "mcpServers": {
-    "egmcp-production": {
-      "command": "/usr/local/bin/egmcp-server",
-      "args": ["stdio-tools", "--envoy-url", "http://prod-envoy:9901"],
-      "env": {}
-    },
-    "egmcp-staging": {
-      "command": "/usr/local/bin/egmcp-server", 
-      "args": ["stdio-tools", "--envoy-url", "http://staging-envoy:9901"],
-      "env": {}
-    }
-  }
-}
-```
-
-### Remote Envoy Gateways
-
-For remote or differently configured Envoy Gateways:
-
-```json
-{
-  "mcpServers": {
-    "egmcp-remote": {
-      "command": "/usr/local/bin/egmcp-server",
-      "args": ["stdio-tools", "--envoy-url", "http://remote-envoy.example.com:9901"],
-      "env": {}
-    }
-  }
-}
-```
-
-### Security Considerations
-
-1. **Network Security**: Restrict access to Envoy admin API
-2. **Authentication**: Use network-level authentication for admin API
-3. **Logging**: Avoid logging sensitive configuration data
-4. **Access Control**: Limit who can access Claude Desktop with EGMCP
+### Key Security Points
+- Use `--kubernetes.read_only` for production monitoring
+- Restrict Envoy admin API access
+- Configure proper RBAC permissions for Gateway API resources
+- Protect kubeconfig files and use short-lived tokens
 
 ## Feedback and Support
 
 ### Reporting Issues
 If you encounter bugs or have problems with installation or usage:
-- **Report issues**: https://github.com/saptak/eg-mcp-server/issues
+- **Report issues**: https://github.com/saptak/egmcp-server/issues
 
 ### Feature Requests
 To request new features or enhancements:
-- **Submit feature requests**: https://github.com/saptak/eg-mcp-server/issues
+- **Submit feature requests**: https://github.com/saptak/egmcp-server/issues
 
 Please include:
 - Your operating system and version
 - Claude Desktop version
+- Kubernetes cluster type and version
+- Gateway API version
 - Steps to reproduce (for bugs)
 - Expected vs actual behavior
 - Relevant error messages or logs
+- Configuration files (sanitized)
+
+### Contributing
+
+Contributions are welcome! Please see:
+- **Contributing Guide**: https://github.com/saptak/egmcp-server/blob/main/CONTRIBUTING.md
+- **Development Setup**: https://github.com/saptak/egmcp-server/blob/main/docs/DEVELOPMENT.md
+
+### Release Notes
+
+Stay updated with new features and improvements:
+- **Releases**: https://github.com/saptak/egmcp-server/releases
+- **Changelog**: https://github.com/saptak/egmcp-server/blob/main/CHANGELOG.md
