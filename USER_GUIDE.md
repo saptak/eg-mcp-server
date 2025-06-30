@@ -277,6 +277,76 @@ The EGMCP Server provides 7 specialized tools for comprehensive Envoy Gateway ma
 - Shows route details before removal
 - Confirms successful deletion
 
+#### 10. `shift_traffic_percentage`
+
+**Purpose**: Modify an existing HTTPRoute to split traffic between backend services for canary deployments
+
+**Parameters**:
+- `route_name`: Name of the HTTPRoute to modify
+- `namespace`: Kubernetes namespace (optional, defaults to 'default')
+- `primary_service`: Name of the primary backend service
+- `canary_service`: Name of the canary backend service
+- `primary_port`: Port number of the primary service
+- `canary_port`: Port number of the canary service
+- `canary_percentage`: Percentage of traffic to route to canary service (0-100)
+
+**Example Queries**:
+- *"Shift 50% of traffic to the canary service for the main-route"*
+
+**Safety Features**:
+- Validates inputs, prevents conflicts, Generate-Apply-Verify
+
+#### 11. `configure_load_balancer`
+
+**Purpose**: Configure load balancing policies for Gateway listeners
+
+**Parameters**:
+- `gateway_name`: Name of the Gateway to configure
+- `namespace`: Kubernetes namespace (optional, defaults to 'default')
+- `listener_name`: Name of the listener to configure
+- `policy`: Load balancing policy to apply
+
+**Example Queries**:
+- *"Configure the load balancer for the main-gateway to use round_robin"*
+
+**Safety Features**:
+- Validates inputs, prevents conflicts, Generate-Apply-Verify
+
+#### 12. `setup_health_check`
+
+**Purpose**: Configure health checks for backend services via HTTPRoute annotations
+
+**Parameters**:
+- `route_name`: Name of the HTTPRoute to configure health checks for
+- `namespace`: Kubernetes namespace (optional, defaults to 'default')
+- `health_check_path`: Path for health check endpoint (optional, defaults to '/health')
+- `interval_seconds`: Health check interval in seconds (optional, defaults to 30)
+- `timeout_seconds`: Health check timeout in seconds (optional, defaults to 5)
+- `healthy_threshold`: Number of successful checks to mark as healthy (optional, defaults to 2)
+- `unhealthy_threshold`: Number of failed checks to mark as unhealthy (optional, defaults to 3)
+
+**Example Queries**:
+- *"Set up a health check for the main-route"*
+
+**Safety Features**:
+- Validates inputs, prevents conflicts, Generate-Apply-Verify
+
+#### 13. `apply_traffic_policy`
+
+**Purpose**: Apply advanced traffic policies like rate limiting, authentication, CORS, and timeouts to HTTPRoutes
+
+**Parameters**:
+- `route_name`: Name of the HTTPRoute to apply the policy to
+- `namespace`: Kubernetes namespace (optional, defaults to 'default')
+- `policy_type`: Type of traffic policy to apply
+- `config`: Policy-specific configuration parameters
+
+**Example Queries**:
+- *"Apply a rate limit policy to the main-route"*
+
+**Safety Features**:
+- Validates inputs, prevents conflicts, Generate-Apply-Verify
+
 ## Route Management
 
 ### Creating Routes

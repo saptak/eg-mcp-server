@@ -135,6 +135,10 @@ MCP Client will automatically load the EGMCP server and make all tools available
 | **`modify_listener`** | Add/remove Gateway listeners | gateway_name, namespace, port, protocol, action | Port conflict prevention, protocol validation |
 | **`create_grpc_route`** | Create new GRPCRoute resources | name, namespace, gateway_name, hostname, service_name, service_port | Validates inputs, prevents conflicts, Generate-Apply-Verify |
 | **`delete_grpc_route`** | Remove existing GRPCRoute resources | name, namespace | Existence verification, detailed feedback |
+| **`shift_traffic_percentage`** | Modify an existing HTTPRoute to split traffic between backend services for canary deployments | route_name, namespace, primary_service, canary_service, primary_port, canary_port, canary_percentage | Validates inputs, prevents conflicts, Generate-Apply-Verify |
+| **`configure_load_balancer`** | Configure load balancing policies for Gateway listeners | gateway_name, namespace, listener_name, policy | Validates inputs, prevents conflicts, Generate-Apply-Verify |
+| **`setup_health_check`** | Configure health checks for backend services via HTTPRoute annotations | route_name, namespace, health_check_path, interval_seconds, timeout_seconds, healthy_threshold, unhealthy_threshold | Validates inputs, prevents conflicts, Generate-Apply-Verify |
+| **`apply_traffic_policy`** | Apply advanced traffic policies like rate limiting, authentication, CORS, and timeouts to HTTPRoutes | route_name, namespace, policy_type, config | Validates inputs, prevents conflicts, Generate-Apply-Verify |
 
 ## 💬 Example Queries
 
