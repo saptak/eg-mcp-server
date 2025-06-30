@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # EGMCP Server - Envoy Gateway Setup Helper
-# This script sets up port forwarding from localhost:9901 to Envoy Gateway admin API
+# This script sets up port forwarding from localhost:19001 to Envoy Gateway admin API
 
 set -e
 
@@ -52,31 +52,31 @@ if [ -z "$ENVOY_POD" ]; then
     echo ""
     echo "💡 Manual setup:"
     echo "   1. Find your Envoy Gateway pod: kubectl get pods -n envoy-gateway-system"
-    echo "   2. Port forward: kubectl port-forward -n envoy-gateway-system pod/YOUR_POD 9901:19000"
+    echo "   2. Port forward: kubectl port-forward -n envoy-gateway-system pod/YOUR_POD 19001:19000"
     exit 1
 fi
 
 echo "✅ Found Envoy Gateway pod: $ENVOY_POD"
 
-# Check if port 9901 is already in use
-if lsof -Pi :9901 -sTCP:LISTEN -t >/dev/null 2>&1; then
-    echo "⚠️  Port 9901 is already in use"
+# Check if port 19001 is already in use
+if lsof -Pi :19001 -sTCP:LISTEN -t >/dev/null 2>&1; then
+    echo "⚠️  Port 19001 is already in use"
     echo "   Checking if it's already connected to Envoy Gateway..."
     
-    if curl -s http://localhost:9901/ready >/dev/null 2>&1; then
-        echo "✅ Port 9901 is already forwarded to Envoy Gateway!"
+    if curl -s http://localhost:19001/ready >/dev/null 2>&1; then
+        echo "✅ Port 19001 is already forwarded to Envoy Gateway!"
         echo "   No setup needed. You can now use EGMCP Server with Claude Desktop."
         exit 0
     else
-        echo "❌ Port 9901 is in use but not connected to Envoy Gateway"
-        echo "   Please stop the process using port 9901 and run this script again."
+        echo "❌ Port 19001 is in use but not connected to Envoy Gateway"
+        echo "   Please stop the process using port 19001 and run this script again."
         echo "   Or use a different port by modifying your Claude Desktop config."
         exit 1
     fi
 fi
 
 echo "🔌 Setting up port forwarding..."
-echo "   localhost:9901 → $ENVOY_POD:19000"
+echo "   localhost:19001 → $ENVOY_POD:19000"
 echo ""
 echo "📝 This will make Envoy Gateway admin API accessible to EGMCP Server"
 echo "   Keep this terminal open while using Claude Desktop"
@@ -87,4 +87,4 @@ echo "   'What listeners are configured in Envoy Gateway?'"
 echo ""
 
 # Start port forwarding
-kubectl port-forward -n envoy-gateway-system pod/$ENVOY_POD 9901:19000
+kubectl port-forward -n envoy-gateway-system pod/$ENVOY_POD 19001:19000
