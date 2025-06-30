@@ -1,7 +1,7 @@
 # EGMCP Server - Envoy Gateway MCP Server
 
-[![NPM Version](https://img.shields.io/npm/v/@saptak/egmcp-server)](https://www.npmjs.com/package/@saptak/egmcp-server)
-[![GitHub Release](https://img.shields.io/github/release/saptak/eg-mcp-server.svg)](https://github.com/saptak/eg-mcp-server/releases)
+[![NPM Version](https://img.shields.io/npm/v/@saptak/egmcp-server/v/3.1.0)](https://www.npmjs.com/package/@saptak/egmcp-server)
+[![GitHub Release](https://img.shields.io/github/release/saptak/eg-mcp-server/v/3.1.0.svg)](https://github.com/saptak/eg-mcp-server/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 A production-ready Model Context Protocol (MCP) server that provides Claude Desktop with comprehensive access to Envoy Gateway configuration, monitoring, and **route management capabilities** with full write operations support.
@@ -133,6 +133,8 @@ Claude Desktop will automatically load the EGMCP server and make all tools avail
 | **`create_http_route`** | Create new HTTPRoute resources | name, namespace, gateway_name, hostname, path, service_name, service_port | Validates inputs, prevents conflicts, Generate-Apply-Verify |
 | **`delete_http_route`** | Remove existing HTTPRoute resources | name, namespace | Existence verification, detailed feedback |
 | **`modify_listener`** | Add/remove Gateway listeners | gateway_name, namespace, port, protocol, action | Port conflict prevention, protocol validation |
+| **`create_grpc_route`** | Create new GRPCRoute resources | name, namespace, gateway_name, hostname, service_name, service_port | Validates inputs, prevents conflicts, Generate-Apply-Verify |
+| **`delete_grpc_route`** | Remove existing GRPCRoute resources | name, namespace | Existence verification, detailed feedback |
 
 ## 💬 Example Queries
 

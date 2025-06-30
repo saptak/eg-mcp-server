@@ -47,6 +47,16 @@ The EGMCP Server provides Claude Desktop with comprehensive access to your Envoy
 - Generate-Apply-Verify pattern for reliable operations
 - Real-time configuration feedback
 
+### What's New in 3.1
+
+🚀 **Advanced Route Configuration**
+- **Traffic Splitting**: Canary deploy new versions of your services by splitting traffic between different backends.
+- **Header Matching**: Route traffic based on HTTP headers, allowing for more flexible routing rules.
+
+⚡ **gRPC Route Management**
+- **gRPC Route Creation**: Create gRPC routes for your gRPC services.
+- **gRPC Route Deletion**: Remove gRPC routes.
+
 ### Quick Overview
 
 ```mermaid
@@ -229,6 +239,43 @@ The EGMCP Server provides 7 specialized tools for comprehensive Envoy Gateway ma
 - Prevents duplicate port conflicts
 - Validates protocol specifications
 - Checks Gateway exists before modification
+
+#### 8. `create_grpc_route`
+
+**Purpose**: Create new GRPCRoute resources for traffic routing
+
+**Parameters**:
+- `name`: GRPCRoute resource name
+- `namespace`: Kubernetes namespace (optional, defaults to 'default')
+- `gateway_name`: Target Gateway name
+- `hostname`: Domain to match (e.g., 'api.example.com')
+- `service_name`: Backend Kubernetes service
+- `service_port`: Backend service port
+
+**Example Queries**:
+- *"Create a gRPC route named api-route for api.example.com that sends traffic to api-service on port 8080"*
+
+**Safety Features**:
+- Validates resource names and hostnames
+- Checks for existing routes with same name
+- Verifies Gateway exists before creation
+- Applies Generate-Apply-Verify pattern
+
+#### 9. `delete_grpc_route`
+
+**Purpose**: Remove existing GRPCRoute resources
+
+**Parameters**:
+- `name`: GRPCRoute name to delete
+- `namespace`: Kubernetes namespace (optional)
+
+**Example Queries**:
+- *"Delete the gRPC route named test-route"*
+
+**Safety Features**:
+- Verifies route exists before deletion
+- Shows route details before removal
+- Confirms successful deletion
 
 ## Route Management
 
