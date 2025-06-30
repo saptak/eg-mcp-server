@@ -1,7 +1,7 @@
 # EGMCP Server - Envoy Gateway MCP Server
 
-[![NPM Version](https://img.shields.io/npm/v/@saptak/egmcp-server/v/3.1.0)](https://www.npmjs.com/package/@saptak/egmcp-server)
-[![GitHub Release](https://img.shields.io/github/release/saptak/eg-mcp-server/v/3.1.0.svg)](https://github.com/saptak/eg-mcp-server/releases)
+[![NPM Version](https://img.shields.io/npm/v/@saptak/egmcp-server)](https://www.npmjs.com/package/@saptak/egmcp-server)
+[![GitHub Release](https://img.shields.io/github/release/saptak/eg-mcp-server.svg)](https://github.com/saptak/eg-mcp-server/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 A production-ready Model Context Protocol (MCP) server that provides Claude Desktop with comprehensive access to Envoy Gateway configuration, monitoring, and **route management capabilities** with full write operations support.
