@@ -1,13 +1,13 @@
 # EGMCP Server User Guide
 
-Complete guide to using the EGMCP Server with Claude Desktop for comprehensive Envoy Gateway management including monitoring, route creation, and traffic configuration.
+Complete guide to using the EGMCP Server with MCP Client for comprehensive Envoy Gateway management including monitoring, route creation, and traffic configuration.
 
 ## Table of Contents
 
 1. [Getting Started](#getting-started)
 2. [Installation](#installation)
 3. [Configuration](#configuration)
-4. [Using with Claude Desktop](#using-with-claude-desktop)
+4. [Using with MCP Client](#using-with-claude-desktop)
 5. [Available Tools](#available-tools)
 6. [Route Management](#route-management)
 7. [Gateway Configuration](#gateway-configuration)
@@ -18,11 +18,11 @@ Complete guide to using the EGMCP Server with Claude Desktop for comprehensive E
 
 ## Getting Started
 
-The EGMCP Server provides Claude Desktop with comprehensive access to your Envoy Gateway configuration, enabling both **read-only monitoring** and **write operations** for route management and traffic configuration using natural language.
+The EGMCP Server provides MCP Client with comprehensive access to your Envoy Gateway configuration, enabling both **read-only monitoring** and **write operations** for route management and traffic configuration using natural language.
 
 ### Prerequisites
 
-- **Claude Desktop** (latest version with MCP support)
+- **MCP Client** (latest version with MCP support)
 - **Envoy Gateway** deployed and accessible
 - **Kubernetes cluster** with Gateway API resources
 - **Network access** to Envoy Gateway admin API (typically port 19000)
@@ -61,7 +61,7 @@ The EGMCP Server provides Claude Desktop with comprehensive access to your Envoy
 
 ```mermaid
 graph LR
-    A[Claude Desktop] -->|MCP Protocol| B[EGMCP Server]
+    A[MCP Client] -->|MCP Protocol| B[EGMCP Server]
     B -->|Admin API| C[Envoy Gateway]
     B -->|Kubernetes API| D[K8s Gateway Resources]
     C -->|Configuration Data| B
@@ -77,7 +77,7 @@ graph LR
 
 1. **Install**: `curl -sSL https://raw.githubusercontent.com/saptak/egmcp-server/main/install.sh | bash`
 2. **Setup Envoy**: `curl -sSL https://raw.githubusercontent.com/saptak/egmcp-server/main/setup-envoy.sh | bash`  
-3. **Restart Claude Desktop**
+3. **Restart MCP Client**
 
 ### Alternative: NPX (No Installation)
 ```bash
@@ -96,7 +96,7 @@ npx @saptak/egmcp-server stdio-tools --envoy-url http://localhost:19001 --kubern
 - `--kubernetes.default_namespace`: Default namespace for operations
 - `--log-level`: Logging verbosity (debug, info, warn, error)
 
-## Using with Claude Desktop
+## Using with MCP Client
 
 ### Basic Queries
 
@@ -475,26 +475,26 @@ metadata:
 
 ### Common Issues and Solutions
 
-#### "Server disconnected" in Claude Desktop
+#### "Server disconnected" in MCP Client
 
-**Symptoms**: Claude Desktop shows "Server disconnected" for egmcp-server
+**Symptoms**: MCP Client shows "Server disconnected" for egmcp-server
 
 **Solutions**:
 1. **Check Envoy Gateway Access**: Run `curl http://localhost:19001/ready`
    - If fails, run: `curl -sSL https://raw.githubusercontent.com/saptak/egmcp-server/main/setup-envoy.sh | bash`
 2. **Verify Kubernetes Access**: Run `kubectl get pods`
 3. **Check Configuration**: Ensure kubeconfig path is correct and absolute
-4. **Restart Claude Desktop** after any configuration changes
+4. **Restart MCP Client** after any configuration changes
 
 #### "Could not attach to MCP Server"
 
-**Symptoms**: Claude Desktop shows attachment error
+**Symptoms**: MCP Client shows attachment error
 
 **Solutions**:
 1. Verify binary path is absolute: `/usr/local/bin/egmcp-server`
 2. Check binary is executable: `chmod +x /usr/local/bin/egmcp-server`
 3. Ensure using `stdio-tools` in args
-4. Check Claude Desktop configuration syntax is valid JSON
+4. Check MCP Client configuration syntax is valid JSON
 5. Verify kubeconfig path exists and is accessible
 
 #### "Connection refused to Envoy Gateway"
@@ -529,7 +529,7 @@ metadata:
 
 ### Debug Mode
 
-Enable detailed logging in Claude Desktop config:
+Enable detailed logging in MCP Client config:
 
 ```json
 {
@@ -550,7 +550,7 @@ Enable detailed logging in Claude Desktop config:
 
 ### Manual Testing
 
-Test server functionality outside Claude Desktop:
+Test server functionality outside MCP Client:
 
 ```bash
 # Test Envoy Gateway connectivity
@@ -599,7 +599,7 @@ To request new features or enhancements:
 
 Please include:
 - Your operating system and version
-- Claude Desktop version
+- MCP Client version
 - Kubernetes cluster type and version
 - Gateway API version
 - Steps to reproduce (for bugs)

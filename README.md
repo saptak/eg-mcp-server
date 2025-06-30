@@ -4,7 +4,7 @@
 [![GitHub Release](https://img.shields.io/github/release/saptak/eg-mcp-server.svg)](https://github.com/saptak/eg-mcp-server/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-A production-ready Model Context Protocol (MCP) server that provides Claude Desktop with comprehensive access to Envoy Gateway configuration, monitoring, and **route management capabilities** with full write operations support.
+A production-ready Model Context Protocol (MCP) server that provides MCP Client with comprehensive access to Envoy Gateway configuration, monitoring, and **route management capabilities** with full write operations support.
 
 ## ✨ Key Features
 
@@ -53,7 +53,7 @@ npx @saptak/egmcp-server stdio-tools --envoy-url http://localhost:19001
 npx @saptak/egmcp-server stdio-tools --envoy-url http://localhost:19001 --kubernetes.kubeconfig ~/.kube/config
 ```
 
-For Claude Desktop, configure with:
+For MCP Client, configure with:
 ```json
 {
   "mcpServers": {
@@ -111,9 +111,9 @@ kubectl get pods -n envoy-gateway-system
 kubectl port-forward -n envoy-gateway-system pod/YOUR_ENVOY_POD 19001:19000
 ```
 
-### 3. Restart Claude Desktop
+### 3. Restart MCP Client
 
-Claude Desktop will automatically load the EGMCP server and make all tools available.
+MCP Client will automatically load the EGMCP server and make all tools available.
 
 ## 🛠️ Available Tools
 
@@ -138,7 +138,7 @@ Claude Desktop will automatically load the EGMCP server and make all tools avail
 
 ## 💬 Example Queries
 
-Once installed, you can ask Claude Desktop:
+Once installed, you can ask MCP Client:
 
 ### Configuration Analysis & Monitoring
 - *"What's the current status of my Envoy Gateway?"*
@@ -168,7 +168,7 @@ Once installed, you can ask Claude Desktop:
 
 ### Basic Requirements
 - **Operating System**: macOS, Linux, Windows
-- **Claude Desktop**: Latest version with MCP support
+- **MCP Client**: Latest version with MCP support
 - **Envoy Gateway**: Any version with admin API enabled
 - **Network Access**: Port forwarding or direct access to Envoy Gateway admin API
 
@@ -215,7 +215,7 @@ export KUBECONFIG="/path/to/kubeconfig"
 - Check that the binary path is correct and absolute
 - Verify binary is executable: `chmod +x /path/to/egmcp-server`
 - Ensure kubeconfig path exists and is accessible
-- Restart Claude Desktop after configuration changes
+- Restart MCP Client after configuration changes
 
 #### "Connection refused" to Envoy Gateway
 - Ensure port forwarding is active: `kubectl port-forward ...`
@@ -252,6 +252,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-**Ready to supercharge your Envoy Gateway management with Claude Desktop? Get started with NPX and experience the power of route management!** 🚀
+**Ready to supercharge your Envoy Gateway management with MCP Client? Get started with NPX and experience the power of route management!** 🚀
 
 **New to EGMCP Server?** Check out the comprehensive [User Guide](USER_GUIDE.md) for detailed examples and use cases.
