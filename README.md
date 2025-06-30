@@ -4,10 +4,6 @@
 [![GitHub Release](https://img.shields.io/github/release/saptak/eg-mcp-server.svg)](https://github.com/saptak/eg-mcp-server/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-**⚠️ Alpha Software - Evaluation Only**
-
-This MCP server is currently in alpha stage and is **not ready for production use**. It is provided for evaluation purposes only.
-
 A production-ready Model Context Protocol (MCP) server that provides Claude Desktop with comprehensive access to Envoy Gateway configuration, monitoring, and **route management capabilities** with full write operations support.
 
 ## ✨ Key Features
@@ -179,8 +175,6 @@ Once installed, you can ask Claude Desktop:
 - **Gateway API**: Kubernetes cluster with Gateway API CRDs installed
 - **RBAC Permissions**: Access to create/modify HTTPRoute and Gateway resources
 
-### Optional
-- **Go**: 1.21+ (for building from source)
 
 ## 🔧 Configuration
 
@@ -241,10 +235,8 @@ export KUBECONFIG="/path/to/kubeconfig"
 
 ## 🤝 Contributing
 
-We welcome contributions! 
+We welcome contributions!
 
-### Development Repository
-- **Main Development**: https://github.com/saptak/egmcp
 - **Issues & Feature Requests**: https://github.com/saptak/eg-mcp-server/issues
 
 ## 📄 License
