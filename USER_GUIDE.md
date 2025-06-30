@@ -29,7 +29,7 @@ The EGMCP Server provides Claude Desktop with comprehensive access to your Envoy
 - **kubectl access** for write operations
 - **macOS, Linux, or Windows** for the server
 
-### What's New in Sprint 3
+### What's New
 
 🚀 **Route Creation and Management**
 - Create HTTPRoute resources via natural language
@@ -102,7 +102,7 @@ Once connected, you can interact with your Envoy Gateway using natural language:
 - *"List the routes configured in my gateway"*
 - *"What backend clusters are available?"*
 
-#### Route Management (New in Sprint 3)
+#### Route Management
 - *"Create a new route for api.example.com that sends traffic to my-service on port 8080"*
 - *"Delete the route named test-route"*
 - *"Add an HTTPS listener on port 443 to my gateway"*
@@ -168,7 +168,7 @@ The EGMCP Server provides 7 specialized tools for comprehensive Envoy Gateway ma
 
 **Output**: High-level summary with counts and status
 
-### Write Operation Tools (Sprint 3)
+### Write Operation Tools
 
 #### 5. `create_http_route`
 
