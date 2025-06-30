@@ -1,7 +1,3 @@
-### **Alpha Software - Evaluation Only**
-
-**Warning:** This MCP server is currently in an alpha stage and is **not ready for production use**. It is provided for evaluation purposes only. The authors and contributors bear no liability for any damages or issues that may arise from its use.
-
 # EGMCP Server User Guide
 
 Complete guide to using the EGMCP Server with Claude Desktop for comprehensive Envoy Gateway management including monitoring, route creation, and traffic configuration.
