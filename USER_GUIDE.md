@@ -31,31 +31,35 @@ The EGMCP Server provides MCP Client with comprehensive access to your Envoy Gat
 
 ### What's New
 
+🎯 **Advanced Traffic Control**
+- Traffic splitting for canary deployments and A/B testing
+- Load balancing policy configuration (Round Robin, Least Request, Random, Ring Hash, Maglev)
+- Backend service health check setup and monitoring
+- Traffic policies (rate limiting, authentication, CORS, timeouts)
+
+🧪 **Dry-Run Mode**
+- Generate YAML manifests without applying to cluster
+- Preview configuration changes before deployment
+- GitOps workflow integration
+- Safe validation and testing
+
 🚀 **Route Creation and Management**
-- Create HTTPRoute resources via natural language
+- Create HTTPRoute and GRPCRoute resources via natural language
 - Delete and modify existing routes
 - Full Gateway listener management
 
 🛡️ **Production Safety Features**
 - Read-only mode for safe monitoring
-- Comprehensive error handling
-- RBAC permission validation
-- Resource conflict detection
+- Comprehensive input validation (RFC 1123 compliance)
+- Enhanced error handling with detailed troubleshooting
+- RBAC permission validation with clear guidance
+- Resource conflict detection and prevention
+- Real-time validation in both dry-run and live modes
 
 ⚡ **Enhanced Capabilities**
-- 7 specialized tools for complete gateway management
+- 11 specialized tools for complete gateway management
 - Generate-Apply-Verify pattern for reliable operations
 - Real-time configuration feedback
-
-### What's New in 3.1
-
-🚀 **Advanced Route Configuration**
-- **Traffic Splitting**: Canary deploy new versions of your services by splitting traffic between different backends.
-- **Header Matching**: Route traffic based on HTTP headers, allowing for more flexible routing rules.
-
-⚡ **gRPC Route Management**
-- **gRPC Route Creation**: Create gRPC routes for your gRPC services.
-- **gRPC Route Deletion**: Remove gRPC routes.
 
 ### Quick Overview
 
@@ -124,7 +128,7 @@ Once connected, you can interact with your Envoy Gateway using natural language:
 
 ## Available Tools
 
-The EGMCP Server provides 7 specialized tools for comprehensive Envoy Gateway management:
+The EGMCP Server provides 11 specialized tools for comprehensive Envoy Gateway management:
 
 ### Read-Only Monitoring Tools
 
@@ -347,6 +351,56 @@ The EGMCP Server provides 7 specialized tools for comprehensive Envoy Gateway ma
 **Safety Features**:
 - Validates inputs, prevents conflicts, Generate-Apply-Verify
 
+## Dry-Run Mode & GitOps Integration
+
+### Overview
+
+The EGMCP Server includes a powerful dry-run mode that generates YAML manifests without applying them to your cluster. This is perfect for GitOps workflows, validation, and preview capabilities.
+
+### Enabling Dry-Run Mode
+
+Configure Claude Desktop with dry-run mode:
+
+```json
+{
+  "mcpServers": {
+    "egmcp-server": {
+      "command": "npx",
+      "args": [
+        "@saptak/egmcp-server",
+        "stdio-tools",
+        "--envoy-url",
+        "http://localhost:19001",
+        "--kubernetes.dry_run"
+      ],
+      "env": {}
+    }
+  }
+}
+```
+
+### Dry-Run Features
+
+- **YAML Generation**: All write operations generate valid Kubernetes YAML
+- **Validation**: Full input validation without cluster modification
+- **Preview Mode**: See exactly what changes would be made
+- **GitOps Ready**: Generated manifests ready for repository commit
+- **Safety**: Zero risk of accidental cluster changes
+
+### Example Dry-Run Queries
+
+- *"Generate YAML manifest for a new route without applying it"*
+- *"Show me what changes would be made for traffic splitting without applying them"*
+- *"Preview the YAML for adding health checks to my route"*
+- *"Run in dry-run mode to validate configurations before deployment"*
+
+### GitOps Workflow Integration
+
+1. **Generate**: Use EGMCP Server to create YAML manifests
+2. **Review**: Inspect generated configurations
+3. **Commit**: Add manifests to your GitOps repository
+4. **Deploy**: Let your GitOps tool apply the changes
+
 ## Route Management
 
 ### Creating Routes
@@ -389,6 +443,82 @@ graph TD
     C -->|Conflict| H
     E -->|API Error| H
     F -->|Verification Failed| I[Warning + Manual Check]
+```
+
+## Advanced Traffic Control
+
+### Traffic Splitting for Canary Deployments
+
+Enable gradual traffic shifts between service versions:
+
+```text
+"Shift 20% of traffic from api-v1 to api-v2 for canary testing"
+→ Modifies HTTPRoute to split traffic between services
+
+"Gradually increase canary traffic to 50% for the user-api route"
+→ Updates existing traffic split configuration
+```
+
+### Load Balancing Configuration
+
+Configure load balancing policies for optimal traffic distribution:
+
+**Available Policies:**
+- **Round Robin**: Distribute requests evenly across backends
+- **Least Request**: Route to backend with fewest active requests
+- **Random**: Random distribution across healthy backends
+- **Ring Hash**: Consistent hashing for session affinity
+- **Maglev**: Google's Maglev consistent hashing algorithm
+
+**Example Queries:**
+```text
+"Configure round robin load balancing for the main gateway listener"
+→ Applies Round Robin policy to Gateway listener
+
+"Set up least request load balancing for high-traffic services"
+→ Configures Least Request policy for optimal performance
+```
+
+### Health Check Configuration
+
+Set up comprehensive health monitoring for backend services:
+
+**Health Check Parameters:**
+- **Path**: Health check endpoint (default: `/health`)
+- **Interval**: Check frequency (default: 30 seconds)
+- **Timeout**: Request timeout (default: 5 seconds)
+- **Healthy Threshold**: Successes to mark healthy (default: 2)
+- **Unhealthy Threshold**: Failures to mark unhealthy (default: 3)
+
+**Example Queries:**
+```text
+"Set up health checks for the user-api route with 30 second intervals"
+→ Configures health monitoring with custom parameters
+
+"Add health checks to payment-service with /status endpoint"
+→ Sets up health monitoring with custom health path
+```
+
+### Traffic Policies
+
+Apply advanced traffic management policies:
+
+**Available Policy Types:**
+- **Rate Limiting**: Control request rates per client
+- **Authentication**: JWT, OAuth, API key validation
+- **CORS**: Cross-origin resource sharing configuration
+- **Timeouts**: Request and response timeout management
+
+**Example Queries:**
+```text
+"Apply rate limiting of 100 requests per second to the api route"
+→ Implements rate limiting policy
+
+"Enable CORS for the frontend route allowing example.com origin"
+→ Configures CORS policy with specified origins
+
+"Add JWT authentication to the admin route"
+→ Sets up JWT-based authentication
 ```
 
 ## Gateway Configuration
@@ -485,7 +615,27 @@ The route is now active and should be handling traffic.
 - *"Set up production traffic routing"*
 - *"Isolate development services"*
 
-### 6. Troubleshooting and Debugging
+### 6. Advanced Traffic Management
+
+**Scenario**: Implement sophisticated traffic control
+
+**Queries**:
+- *"Set up canary deployment with 10% traffic to new version"*
+- *"Configure health checks for critical services"*
+- *"Apply rate limiting to prevent service overload"*
+- *"Enable load balancing across multiple backend instances"*
+
+### 7. GitOps and Validation
+
+**Scenario**: Generate manifests for GitOps workflows
+
+**Queries**:
+- *"Generate YAML for new route configuration"*
+- *"Preview traffic split changes without applying"*
+- *"Validate configuration before deployment"*
+- *"Create dry-run manifests for review process"*
+
+### 8. Troubleshooting and Debugging
 
 **Scenario**: Debug traffic issues
 
@@ -511,6 +661,23 @@ In read-only mode:
 - ✅ All monitoring and inspection tools work
 - ❌ No write operations are allowed
 - 🛡️ Zero risk of accidental changes
+
+### Dry-Run Mode
+
+Enable dry-run mode for safe validation and GitOps workflows:
+
+```bash
+egmcp-server stdio-tools \
+  --envoy-url http://localhost:19001 \
+  --kubernetes.dry_run
+```
+
+In dry-run mode:
+- ✅ All tools generate valid YAML manifests
+- ✅ Full validation without cluster modification
+- ✅ Perfect for GitOps and preview workflows
+- ❌ No actual cluster changes are made
+- 🛡️ Zero risk with full functionality
 
 ### Error Handling
 

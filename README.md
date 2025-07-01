@@ -4,28 +4,46 @@
 [![GitHub Release](https://img.shields.io/github/release/saptak/eg-mcp-server.svg)](https://github.com/saptak/eg-mcp-server/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-A production-ready Model Context Protocol (MCP) server that provides MCP Client with comprehensive access to Envoy Gateway configuration, monitoring, and **route management capabilities** with full write operations support.
+A production-ready Model Context Protocol (MCP) server that provides Claude Desktop with comprehensive access to Envoy Gateway configuration, monitoring, and **complete traffic management capabilities** with advanced traffic control features.
+
+## 🎯 Overview
+
+The EGMCP Server bridges Claude Desktop and Envoy Gateway, enabling natural language queries and **complete management** of your service mesh infrastructure. Built through **Sprint 4: Advanced Traffic Control**, it provides real-time access to listeners, routes, clusters, full route lifecycle management, and sophisticated traffic engineering capabilities.
 
 ## ✨ Key Features
 
-### 🔍 **Monitoring & Discovery**
-- **Real-time Configuration Access**: Live connection to Envoy Gateway admin API
-- **Resource Discovery**: Dynamic listing of listeners, routes, and clusters
-- **Interactive Tools**: 7 specialized tools for complete Envoy Gateway management
-- **Robust Error Handling**: Graceful degradation and timeout protection
+### 🔍 **Monitoring & Discovery** (Sprint 1 & 2)
+- **🔌 Real-time Configuration Access**: Live connection to Envoy Gateway admin API
+- **📊 Resource Discovery**: Dynamic listing of listeners, routes, and clusters
+- **🛠️ Interactive Tools**: 11 specialized tools for complete Envoy Gateway management
+- **🔒 Robust Error Handling**: Graceful degradation and timeout protection
 
-### 🚀 **Route Management** (NEW!)
-- **HTTPRoute Creation**: Create routes via natural language
-- **Route Deletion**: Remove routes with safety validation
-- **Gateway Listener Management**: Add/remove ports and protocols
-- **Generate-Apply-Verify Pattern**: Reliable write operations
+### 🚀 **Route Management** (Sprint 3)
+- **🛣️ HTTPRoute Creation**: Create routes via natural language
+- **🗑️ Route Deletion**: Remove routes with safety validation
+- **🔧 Gateway Listener Management**: Add/remove ports and protocols
+- **⚡ Generate-Apply-Verify Pattern**: Reliable write operations
+
+### 🎯 **Advanced Traffic Control** (Sprint 4 - NEW!)
+- **📊 Traffic Splitting**: Canary deployments with percentage-based traffic distribution
+- **⚖️ Load Balancing**: Configure policies (Round Robin, Least Request, Random, Ring Hash, Maglev)
+- **🏥 Health Checks**: Backend service health monitoring configuration
+- **🛡️ Traffic Policies**: Rate limiting, authentication, CORS, and timeout policies
 
 ### 🛡️ **Production Safety**
-- **Read-Only Mode**: Safe monitoring without modification risk
-- **Comprehensive Validation**: Resource name, hostname, port validation
-- **Conflict Prevention**: Duplicate resource detection
-- **RBAC Error Handling**: Clear permission error messages
-- **Resource Labeling**: Track EGMCP-managed resources
+- **🔒 Read-Only Mode**: Safe monitoring without modification risk
+- **🧪 Dry-Run Mode**: Generate YAML manifests without applying
+- **✅ Comprehensive Validation**: RFC 1123 compliant resource names, hostnames, ports
+- **🚫 Conflict Prevention**: Duplicate resource detection with intelligent checking
+- **🔐 RBAC Error Handling**: Clear permission error messages with troubleshooting guidance
+- **🏷️ Resource Labeling**: Track EGMCP-managed resources for audit trails
+- **⚡ Input Sanitization**: Real-time validation in both dry-run and live modes
+
+### ⚡ **Enhanced Capabilities**
+- **🎛️ Multi-Environment Support**: Production, staging, development configs
+- **🧪 Edge Case Handling**: Robust error handling for production use
+- **📈 Performance Optimized**: Tested for responsiveness with Claude Desktop
+- **🔄 Kubernetes Integration**: Full Gateway API resource CRUD operations
 
 ## 🎬 Watch the Demo
 
@@ -33,7 +51,7 @@ Check out this YouTube short for a quick demo of the EGMCP server in action:
 
 [![EGMCP Server Demo](https://img.youtube.com/vi/C-Fakrx3fUQ/0.jpg)](https://www.youtube.com/shorts/C-Fakrx3fUQ)
 
-*Note: Demo shows basic features. Latest version includes comprehensive route management capabilities!*
+*Note: Demo shows Sprint 2 features. Current version includes comprehensive route management and advanced traffic control!*
 
 ## 📖 Documentation
 
@@ -53,7 +71,7 @@ npx @saptak/egmcp-server stdio-tools --envoy-url http://localhost:19001
 npx @saptak/egmcp-server stdio-tools --envoy-url http://localhost:19001 --kubernetes.kubeconfig ~/.kube/config
 ```
 
-For MCP Client, configure with:
+For Claude Desktop, configure with:
 ```json
 {
   "mcpServers": {
@@ -94,6 +112,25 @@ For MCP Client, configure with:
 }
 ```
 
+#### For GitOps Development (Dry-Run Mode):
+```json
+{
+  "mcpServers": {
+    "egmcp-server": {
+      "command": "npx",
+      "args": [
+        "@saptak/egmcp-server",
+        "stdio-tools",
+        "--envoy-url",
+        "http://localhost:19001",
+        "--kubernetes.dry_run"
+      ],
+      "env": {}
+    }
+  }
+}
+```
+
 #### Option B: Binary Installation
 
 ```bash
@@ -111,56 +148,72 @@ kubectl get pods -n envoy-gateway-system
 kubectl port-forward -n envoy-gateway-system pod/YOUR_ENVOY_POD 19001:19000
 ```
 
-### 3. Restart MCP Client
+### 3. Restart Claude Desktop
 
-MCP Client will automatically load the EGMCP server and make all tools available.
+Claude Desktop will automatically load the EGMCP server and make all tools available.
 
 ## 🛠️ Available Tools
 
-### Read-Only Monitoring Tools
+### Available Tools Overview
 
-| Tool | Description | Use Case |
-|------|-------------|----------|
-| **`list_envoy_listeners`** | List all listeners with configurations | Port and endpoint discovery |
-| **`list_envoy_routes`** | List routes and virtual hosts | Traffic routing analysis |
-| **`list_envoy_clusters`** | List backend clusters | Service discovery |
-| **`get_envoy_config_summary`** | Overall configuration summary | Quick health checks |
+The EGMCP Server provides **11 specialized tools** for comprehensive Envoy Gateway management:
 
-### Write Operation Tools (NEW!)
+#### **Read-Only Monitoring Tools** (4 tools)
+- **Listeners**: Discover all listeners with their configurations
+- **Routes**: Analyze traffic routing and virtual hosts  
+- **Clusters**: List backend services and clusters
+- **Summary**: Quick configuration overview and health status
 
-| Tool | Description | Parameters | Safety Features |
-|------|-------------|------------|-----------------|
-| **`create_http_route`** | Create new HTTPRoute resources | name, namespace, gateway_name, hostname, path, service_name, service_port | Validates inputs, prevents conflicts, Generate-Apply-Verify |
-| **`delete_http_route`** | Remove existing HTTPRoute resources | name, namespace | Existence verification, detailed feedback |
-| **`modify_listener`** | Add/remove Gateway listeners | gateway_name, namespace, port, protocol, action | Port conflict prevention, protocol validation |
-| **`create_grpc_route`** | Create new GRPCRoute resources | name, namespace, gateway_name, hostname, service_name, service_port | Validates inputs, prevents conflicts, Generate-Apply-Verify |
-| **`delete_grpc_route`** | Remove existing GRPCRoute resources | name, namespace | Existence verification, detailed feedback |
-| **`shift_traffic_percentage`** | Modify an existing HTTPRoute to split traffic between backend services for canary deployments | route_name, namespace, primary_service, canary_service, primary_port, canary_port, canary_percentage | Validates inputs, prevents conflicts, Generate-Apply-Verify |
-| **`configure_load_balancer`** | Configure load balancing policies for Gateway listeners | gateway_name, namespace, listener_name, policy | Validates inputs, prevents conflicts, Generate-Apply-Verify |
-| **`setup_health_check`** | Configure health checks for backend services via HTTPRoute annotations | route_name, namespace, health_check_path, interval_seconds, timeout_seconds, healthy_threshold, unhealthy_threshold | Validates inputs, prevents conflicts, Generate-Apply-Verify |
-| **`apply_traffic_policy`** | Apply advanced traffic policies like rate limiting, authentication, CORS, and timeouts to HTTPRoutes | route_name, namespace, policy_type, config | Validates inputs, prevents conflicts, Generate-Apply-Verify |
+#### **Write Operation Tools** (3 tools - Sprint 3)
+- **Route Creation**: Create HTTPRoute resources via natural language
+- **Route Deletion**: Remove existing routes with safety validation
+- **Listener Management**: Add/remove Gateway listeners (ports/protocols)
+
+#### **Advanced Traffic Control** (4 tools - Sprint 4)
+- **Traffic Splitting**: Canary deployments with percentage-based distribution
+- **Load Balancing**: Configure policies (Round Robin, Least Request, etc.)
+- **Health Checks**: Backend service monitoring configuration
+- **Traffic Policies**: Rate limiting, authentication, CORS, timeouts
+
+**📖 For detailed tool documentation, parameters, examples, and safety features, see the [Complete User Guide](USER_GUIDE.md#available-tools).**
 
 ## 💬 Example Queries
 
-Once installed, you can ask MCP Client:
+Once installed, you can ask Claude Desktop:
 
 ### Configuration Analysis & Monitoring
 - *"What's the current status of my Envoy Gateway?"*
 - *"Show me all the listeners in Envoy Gateway"*
 - *"Analyze my traffic routing configuration"*
 - *"List all backend services available"*
+- *"Give me a summary of the gateway configuration"*
 
-### Route Management (NEW!)
+### Route Management (Sprint 3)
 - *"Create a route for my API service on api.example.com that sends traffic to api-service port 8080"*
 - *"Add a new route named user-api for users.example.com pointing to user-service:3000"*
 - *"Delete the route named test-route"*
 - *"Add HTTPS support to my gateway"*
 - *"Remove the listener on port 8080 from my gateway"*
 
+### Advanced Traffic Control (Sprint 4 - NEW!)
+- *"Shift 20% of traffic from api-v1 to api-v2 for canary testing"*
+- *"Configure round robin load balancing for the main gateway listener"*
+- *"Set up health checks for the user-api route with 30 second intervals"*
+- *"Apply rate limiting of 100 requests per second to the api route"*
+- *"Enable CORS for the frontend route allowing example.com origin"*
+- *"Add JWT authentication to the admin route"*
+
+### Dry-Run Mode & GitOps (Sprint 4 - NEW!)
+- *"Generate YAML manifest for a new route without applying it"*
+- *"Show me what changes would be made for traffic splitting without applying them"*
+- *"Preview the YAML for adding health checks to my route"*
+- *"Run in dry-run mode to validate configurations before deployment"*
+
 ### Advanced Route Configuration
 - *"Create a route in the production namespace for payments.app.com pointing to payment-svc:8080 with path /api/v1"*
 - *"Add an HTTPS listener on port 443 to demo-gateway"*
 - *"Show me all routes and then create a new one for my service"*
+- *"Gradually shift 10% of user traffic to the new recommendation service"*
 
 ### Troubleshooting
 - *"Check if there are any listeners on port 8080"*
@@ -172,72 +225,93 @@ Once installed, you can ask MCP Client:
 
 ### Basic Requirements
 - **Operating System**: macOS, Linux, Windows
-- **MCP Client**: Latest version with MCP support
+- **Claude Desktop**: Latest version with MCP support
 - **Envoy Gateway**: Any version with admin API enabled
 - **Network Access**: Port forwarding or direct access to Envoy Gateway admin API
 
-### For Write Operations (NEW!)
+### For Write Operations (Sprint 3)
 - **Kubernetes Access**: kubectl configuration and permissions
 - **Gateway API**: Kubernetes cluster with Gateway API CRDs installed
 - **RBAC Permissions**: Access to create/modify HTTPRoute and Gateway resources
 
+### Optional
+- **Go**: 1.21+ (for building from source)
 
 ## 🔧 Configuration
 
-### Basic Configuration
+### Key Configuration Options
 
-```bash
-# Read-only monitoring
-npx @saptak/egmcp-server stdio-tools --envoy-url http://localhost:19001
+- `--envoy-url`: Envoy Gateway admin API URL
+- `--kubernetes.kubeconfig`: Path to kubeconfig file  
+- `--kubernetes.read_only`: Enable read-only mode (safe for production)
+- `--kubernetes.dry_run`: Enable dry-run mode (generate manifests without applying)
+- `--kubernetes.default_namespace`: Default namespace for operations
+- `--log-level`: Logging verbosity (debug, info, warn, error)
 
-# Full management capabilities
-npx @saptak/egmcp-server stdio-tools \
-  --envoy-url http://localhost:19001 \
-  --kubernetes.kubeconfig ~/.kube/config \
-  --kubernetes.default_namespace demo
+### Quick Configuration Examples
 
-# Production-safe read-only mode
-npx @saptak/egmcp-server stdio-tools \
-  --envoy-url http://localhost:19001 \
-  --kubernetes.kubeconfig ~/.kube/config \
-  --kubernetes.read_only
+#### Production Monitoring (Read-Only)
+```json
+{
+  "args": [
+    "stdio-tools", 
+    "--envoy-url", "http://prod-envoy:19001",
+    "--kubernetes.kubeconfig", "/etc/kubernetes/prod-config",
+    "--kubernetes.read_only"
+  ]
+}
 ```
 
-### Environment Variables
-
-```bash
-export EGMCP_ENVOY_ADMIN_URL="http://localhost:19001"
-export EGMCP_LOG_LEVEL="info"
-export KUBECONFIG="/path/to/kubeconfig"
+#### GitOps Development (Dry-Run Mode)
+```json
+{
+  "args": [
+    "stdio-tools", 
+    "--envoy-url", "http://localhost:19001",
+    "--kubernetes.dry_run"
+  ]
+}
 ```
+
+**📖 For complete configuration options, environment variables, multi-environment setup, and detailed examples, see the [Configuration Guide](USER_GUIDE.md#configuration).**
 
 ## 🚨 Troubleshooting
 
-### Common Issues
+### Quick Fixes
 
 #### "Could not attach to MCP Server"
-- Check that the binary path is correct and absolute
-- Verify binary is executable: `chmod +x /path/to/egmcp-server`
-- Ensure kubeconfig path exists and is accessible
-- Restart MCP Client after configuration changes
+- ✅ Check binary path is absolute: `/usr/local/bin/egmcp-server`
+- ✅ Restart Claude Desktop after configuration changes
+- ✅ Verify kubeconfig path exists and is accessible
 
-#### "Connection refused" to Envoy Gateway
-- Ensure port forwarding is active: `kubectl port-forward ...`
-- Check Envoy Gateway admin API: `curl http://localhost:19001/ready`
-- Verify correct port (19000 for Gateway, not 9901)
-- Run automated setup: `curl -sSL .../setup-envoy.sh | bash`
+#### "Connection refused" to Envoy Gateway  
+- ✅ Run automated setup: `curl -sSL https://raw.githubusercontent.com/saptak/eg-mcp-server/main/setup-envoy.sh | bash`
+- ✅ Test connectivity: `curl http://localhost:19001/ready`
 
 #### "Permission denied" for write operations
-- Verify kubectl access: `kubectl get httproutes`
-- Check RBAC permissions for Gateway API resources
-- Use read-only mode for monitoring: `--kubernetes.read_only`
-- Ensure service account has proper cluster role bindings
+- ✅ Use read-only mode for monitoring: `--kubernetes.read_only`  
+- ✅ Check kubectl access: `kubectl get httproutes`
 
 #### "Route creation fails with validation errors"
-- Use lowercase names with hyphens only (no underscores/uppercase)
-- Ensure valid DNS hostnames (no special characters)
-- Use valid port numbers (1-65535)
-- Ensure target namespace exists
+- ✅ **Resource Names**: Use lowercase, numbers, hyphens only (`api-service` ✅, `Api_Service` ❌)
+- ✅ **Hostnames**: Valid DNS format (`api.example.com` ✅, `invalid hostname` ❌)
+- ✅ **Ports**: Must be 1-65535 (8080 ✅, 70000 ❌)
+
+### Testing & Debug
+
+```bash
+# Health check
+egmcp-server health --envoy-url http://localhost:19001
+
+# Debug mode
+egmcp-server stdio-tools --log-level debug --envoy-url http://localhost:19001
+
+# Test read-only mode
+echo '{"jsonrpc": "2.0", "id": 1, "method": "tools/call", "params": {"name": "create_http_route", "arguments": {"name": "test", "gateway_name": "demo", "hostname": "test.local", "service_name": "svc", "service_port": 8080}}}' | \
+  egmcp-server stdio-tools --kubernetes.read_only
+```
+
+**📖 For comprehensive troubleshooting, detailed error solutions, validation examples, and testing procedures, see the [Complete Troubleshooting Guide](USER_GUIDE.md#troubleshooting).**
 
 ## 🤝 Contributing
 
@@ -256,6 +330,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-**Ready to supercharge your Envoy Gateway management with MCP Client? Get started with NPX and experience the power of route management!** 🚀
+**Ready to supercharge your Envoy Gateway management with Claude Desktop? Get started with NPX and experience the power of advanced traffic control!** 🚀
 
 **New to EGMCP Server?** Check out the comprehensive [User Guide](USER_GUIDE.md) for detailed examples and use cases.
