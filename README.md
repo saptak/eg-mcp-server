@@ -8,23 +8,23 @@ A production-ready Model Context Protocol (MCP) server that provides Claude Desk
 
 ## 🎯 Overview
 
-The EGMCP Server bridges Claude Desktop and Envoy Gateway, enabling natural language queries and **complete management** of your service mesh infrastructure. Built through **Sprint 4: Advanced Traffic Control**, it provides real-time access to listeners, routes, clusters, full route lifecycle management, and sophisticated traffic engineering capabilities.
+The EGMCP Server bridges Claude Desktop and Envoy Gateway, enabling natural language queries and **complete management** of your service mesh infrastructure. It provides real-time access to listeners, routes, clusters, full route lifecycle management, and sophisticated traffic engineering capabilities.
 
 ## ✨ Key Features
 
-### 🔍 **Monitoring & Discovery** (Sprint 1 & 2)
+### 🔍 **Monitoring & Discovery**
 - **🔌 Real-time Configuration Access**: Live connection to Envoy Gateway admin API
 - **📊 Resource Discovery**: Dynamic listing of listeners, routes, and clusters
 - **🛠️ Interactive Tools**: 11 specialized tools for complete Envoy Gateway management
 - **🔒 Robust Error Handling**: Graceful degradation and timeout protection
 
-### 🚀 **Route Management** (Sprint 3)
+### 🚀 **Route Management**
 - **🛣️ HTTPRoute Creation**: Create routes via natural language
 - **🗑️ Route Deletion**: Remove routes with safety validation
 - **🔧 Gateway Listener Management**: Add/remove ports and protocols
 - **⚡ Generate-Apply-Verify Pattern**: Reliable write operations
 
-### 🎯 **Advanced Traffic Control** (Sprint 4 - NEW!)
+### 🎯 **Advanced Traffic Control**
 - **📊 Traffic Splitting**: Canary deployments with percentage-based traffic distribution
 - **⚖️ Load Balancing**: Configure policies (Round Robin, Least Request, Random, Ring Hash, Maglev)
 - **🏥 Health Checks**: Backend service health monitoring configuration
@@ -164,12 +164,12 @@ The EGMCP Server provides **11 specialized tools** for comprehensive Envoy Gatew
 - **Clusters**: List backend services and clusters
 - **Summary**: Quick configuration overview and health status
 
-#### **Write Operation Tools** (3 tools - Sprint 3)
+#### **Write Operation Tools** (3 tools)
 - **Route Creation**: Create HTTPRoute resources via natural language
 - **Route Deletion**: Remove existing routes with safety validation
 - **Listener Management**: Add/remove Gateway listeners (ports/protocols)
 
-#### **Advanced Traffic Control** (4 tools - Sprint 4)
+#### **Advanced Traffic Control** (4 tools)
 - **Traffic Splitting**: Canary deployments with percentage-based distribution
 - **Load Balancing**: Configure policies (Round Robin, Least Request, etc.)
 - **Health Checks**: Backend service monitoring configuration
@@ -188,14 +188,14 @@ Once installed, you can ask Claude Desktop:
 - *"List all backend services available"*
 - *"Give me a summary of the gateway configuration"*
 
-### Route Management (Sprint 3)
+### Route Management
 - *"Create a route for my API service on api.example.com that sends traffic to api-service port 8080"*
 - *"Add a new route named user-api for users.example.com pointing to user-service:3000"*
 - *"Delete the route named test-route"*
 - *"Add HTTPS support to my gateway"*
 - *"Remove the listener on port 8080 from my gateway"*
 
-### Advanced Traffic Control (Sprint 4 - NEW!)
+### Advanced Traffic Control
 - *"Shift 20% of traffic from api-v1 to api-v2 for canary testing"*
 - *"Configure round robin load balancing for the main gateway listener"*
 - *"Set up health checks for the user-api route with 30 second intervals"*
@@ -203,7 +203,7 @@ Once installed, you can ask Claude Desktop:
 - *"Enable CORS for the frontend route allowing example.com origin"*
 - *"Add JWT authentication to the admin route"*
 
-### Dry-Run Mode & GitOps (Sprint 4 - NEW!)
+### Dry-Run Mode & GitOps
 - *"Generate YAML manifest for a new route without applying it"*
 - *"Show me what changes would be made for traffic splitting without applying them"*
 - *"Preview the YAML for adding health checks to my route"*
@@ -229,7 +229,7 @@ Once installed, you can ask Claude Desktop:
 - **Envoy Gateway**: Any version with admin API enabled
 - **Network Access**: Port forwarding or direct access to Envoy Gateway admin API
 
-### For Write Operations (Sprint 3)
+### For Write Operations
 - **Kubernetes Access**: kubectl configuration and permissions
 - **Gateway API**: Kubernetes cluster with Gateway API CRDs installed
 - **RBAC Permissions**: Access to create/modify HTTPRoute and Gateway resources
